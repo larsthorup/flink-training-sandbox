@@ -15,18 +15,8 @@ public class RideCleansing {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
-        int maxDelaySeconds = 60;
-        int servingSpeedFactor = 600;
-        DataStream<TaxiRide> rides = env.addSource(
-                new TaxiRideSource("C:\\Users\\lars_000\\Downloads\\nycTaxiRides.gz", maxDelaySeconds, servingSpeedFactor));
-
-        DataStream<TaxiRide> ridesInNYC = rides.filter(new FilterFunction<TaxiRide>() {
-            @Override
-            public boolean filter(TaxiRide taxiRide) throws Exception {
-                return GeoUtils.isInNYC(taxiRide.startLon, taxiRide.startLat)
-                        && GeoUtils.isInNYC(taxiRide.endLon, taxiRide.endLat);
-            }
-        });
+        DataStream<TaxiRide> rides = TaxiRideOperators.rideSource(env);
+        DataStream<TaxiRide> ridesInNYC = TaxiRideOperators.isInNYC(rides);
 
         ridesInNYC.print();
         env.execute();
