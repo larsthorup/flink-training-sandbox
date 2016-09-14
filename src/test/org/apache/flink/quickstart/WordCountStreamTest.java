@@ -18,12 +18,6 @@ import static org.junit.Assert.*;
 
 public class WordCountStreamTest {
 
-    public static <T> List<T> copy(Iterator<T> iter) {
-        List<T> copy = new ArrayList<T>();
-        while (iter.hasNext())
-            copy.add(iter.next());
-        return copy;
-    }
 
     public static HashMap<String, Integer> map(List<Tuple2<String, Integer>> input) {
         HashMap<String, Integer> result = new HashMap<String, Integer>();
@@ -44,7 +38,7 @@ public class WordCountStreamTest {
 
         DataStream<Tuple2<String, Integer>> counts = WordCountStream.transform(text);
 
-        List<Tuple2<String, Integer>> countList = copy(DataStreamUtils.collect(counts));
+        List<Tuple2<String, Integer>> countList = CollectionUtil.copy(DataStreamUtils.collect(counts));
         HashMap<String, Integer> countResult = map(countList);
         // System.out.println(countResult);
         assertEquals((Integer)2, countResult.get("hey"));
